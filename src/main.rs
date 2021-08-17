@@ -9,12 +9,40 @@ struct Cell(bool);
 impl Cell {
     fn switch(&mut self) { self.0 = !self.0 }
 
-    fn update_cell(&mut self, field: &Field) {
+    fn update(&mut self, field: &Field, position: (i32, i32)) {
+        let mut neighbours_count = 0;
         for row_offset in -1..1 {
             for col_offset in -1..1 {
+                if row_offset == 0 && col_offset == 0 {
+                    continue;    
+                }
 
+                let new_row = row_offset + position.0;
+                if new_row < 0 || new_row >= H {
+                    continue;
+                }
+
+                let new_col = col_offset + position.1;
+                if new_col < 0 || new_col >= W {
+                    continue;
+                }
+
+                if field[new_row as usize][new_col as usize].0 {
+                    neighbours_count += 1;
+                }
             }
         }
+
+        if self.0 {
+            if !(neighbours_count <= 1 || neighbours_count >= 4) {
+                return;
+            }
+        } else if neighbours_count == 3 {
+            self.0 = true;
+            return;
+        }
+
+        self.0 = false;
     }
 }
 
@@ -50,20 +78,17 @@ fn randomized_field() -> Field {
     field
 }
 
-fn update_field(field: &Field) {
-    for row in field {
-        for cell in row {
-            cell.update(&field);
-        }
-    }
-}
-
 
 fn main() {
     // render_field(field);
     let mut field = randomized_field();
     loop {
         render_field(&field);
-        update_field(&field);
+
+        for (row_ind, row) in field.iter_mut().enumerate() {
+            for (col_ind, cell) in row.iter_mut().enumerate() {
+                cell.update(&field, (row_ind as i32, col_ind as i32));
+            }
+        }
     }
 }
