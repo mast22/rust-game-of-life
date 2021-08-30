@@ -1,5 +1,5 @@
-use rand::Rng;
 use bool;
+use rand::Rng;
 
 const W: i32 = 5;
 const H: i32 = 5;
@@ -7,14 +7,16 @@ const H: i32 = 5;
 struct Cell(bool);
 
 impl Cell {
-    fn switch(&mut self) { self.0 = !self.0 }
+    fn switch(&mut self) {
+        self.0 = !self.0
+    }
 
     fn update(&mut self, field: &Field, position: (i32, i32)) {
         let mut neighbours_count = 0;
         for row_offset in -1..1 {
             for col_offset in -1..1 {
                 if row_offset == 0 && col_offset == 0 {
-                    continue;    
+                    continue;
                 }
 
                 let new_row = row_offset + position.0;
@@ -70,14 +72,13 @@ fn randomized_field() -> Field {
     for _ in 0..W {
         let mut row = Vec::new();
         for _ in 0..H {
-            row.push(Cell (rng.gen::<bool>()));
+            row.push(Cell(rng.gen::<bool>()));
         }
         field.push(row);
     }
 
     field
 }
-
 
 fn main() {
     // render_field(field);
