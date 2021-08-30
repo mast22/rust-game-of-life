@@ -4,7 +4,49 @@ use rand::Rng;
 const W: i32 = 5;
 const H: i32 = 5;
 
+// type Field = [[Cell; W as usize]; H as usize]; TODO
+// https://doc.rust-lang.org/std/mem/union.MaybeUninit.html#initializing-an-array-element-by-element
+type Field = Vec<Vec<Cell>>;
+
+fn render_field(field: &Field) {
+    for i in field {
+        let mut row = String::from("|");
+        for cell in i {
+            if cell.0 {
+                row.push_str("■|");
+            } else {
+                row.push_str("_|");
+            }
+        }
+        println!("{}", row);
+    }
+}
+
+fn randomized_field() -> Field {
+    let mut rng = rand::thread_rng();
+    let mut field: Field = Vec::new();
+    for _ in 0..W {
+        let mut row = Vec::new();
+        for _ in 0..H {
+            row.push(Cell(rng.gen::<bool>()));
+        }
+        field.push(row);
+    }
+
+    field
+}
+
 struct Cell(bool);
+
+impl std::cmp::PartialEq for Cell {
+    fn ne(&self, other: &Self) -> bool {
+        self.0 == other.0
+    }
+
+    fn eq(&self, other: &Self) -> bool {
+        self.0 != other.0
+    }
+}
 
 impl Cell {
     fn switch(&mut self) {
@@ -46,38 +88,6 @@ impl Cell {
 
         self.0 = false;
     }
-}
-
-// type Field = [[Cell; W as usize]; H as usize]; TODO
-// https://doc.rust-lang.org/std/mem/union.MaybeUninit.html#initializing-an-array-element-by-element
-type Field = Vec<Vec<Cell>>;
-
-fn render_field(field: &Field) {
-    for i in field {
-        let mut row = String::from("|");
-        for cell in i {
-            if cell.0 {
-                row.push_str("■|");
-            } else {
-                row.push_str("_|");
-            }
-        }
-        println!("{}", row);
-    }
-}
-
-fn randomized_field() -> Field {
-    let mut rng = rand::thread_rng();
-    let mut field: Field = Vec::new();
-    for _ in 0..W {
-        let mut row = Vec::new();
-        for _ in 0..H {
-            row.push(Cell(rng.gen::<bool>()));
-        }
-        field.push(row);
-    }
-
-    field
 }
 
 fn main() {
