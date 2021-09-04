@@ -9,7 +9,7 @@ use outputers::CLIOutputer;
 
 
 fn main() {
-    let mut field = HashMapField::new_randomized();
+    let mut field = HashMapField::new_randomized(CLIOutputer {});
 
-    field.to_live(CLIOutputer {});
+    field.to_live();
 }
